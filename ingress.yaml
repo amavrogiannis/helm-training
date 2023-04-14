@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  generation: 1
+  name: k8s-page-ingress
+  namespace: k8s-club
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: example.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: k8s-page-svc
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+status:
+  loadBalancer: {}
