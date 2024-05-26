@@ -1,4 +1,0 @@
-apiVersion: v2
-name: k8s-example
-version: 0.1.0
-description: K8s example - Helm chart
