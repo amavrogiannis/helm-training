@@ -1,0 +1,100 @@
+services:
+  emailservice:
+    build: 
+      context: ./src/emailservice
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080/tcp"
+    environment:
+      - PORT=8080
+
+  productcatalogservice:
+    build:
+      context: ./src/productcatalogservice
+      dockerfile: Dockerfile
+    ports:
+      - "3550:3550/tcp"
+    environment:
+      - PORT=3550
+      - DISABLE_PROFILER=1
+
+  recommendationservice:
+    build:
+      context: ./src/recommendationservice
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080/tcp"
+    environment:
+      - PORT=8080
+      - PRODUCT_CATALOG_SERVICE_ADDR=productcatalogservice:3550
+
+  shippingservice:
+    build:
+      context: ./src/shippingservice
+      dockerfile: Dockerfile
+    ports:
+      - "50051:50051/tcp"
+    environment:
+      - PORT=50051
+
+  checkoutservice:
+    build:
+      context: ./src/checkoutservice
+      dockerfile: Dockerfile
+    ports:
+      - "5050:5050/tcp"
+    environment:
+      - PORT=5050
+      - PRODUCT_CATALOG_SERVICE_ADDR=productcatalogservice:3550
+      - SHIPPING_SERVICE_ADDR=shippingservice:50051
+      - PAYMENT_SERVICE_ADDR=paymentservice:50051
+      - EMAIL_SERVICE_ADDR=emailservice:5000
+      - CURRENCY_SERVICE_ADDR=currencyservice:7000
+      - CART_SERVICE_ADDR=cartservice:7070
+
+  paymentservice:
+    build:
+      context: ./src/paymentservice
+      dockerfile: Dockerfile
+    ports:
+      - "50051:50051/tcp"
+    environment:
+      - PORT=50051
+
+  currencyservice:
+    build:
+      context: ./src/currencyservice
+      dockerfile: Dockerfile
+    ports:
+      - "7000:7000/tcp"
+    environment:
+      - PORT=7000
+
+  cartservice:
+    build:
+      context: ./src/cartservice/src
+      dockerfile: Dockerfile
+    ports:
+      - "7070:7070/tcp"
+    environment:
+      - REDIS_ADDR=redis-cart:6379
+
+  frontend:
+    build:
+      context: ./src/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080/tcp"
+    environment:
+      - FRONTEND_ADDR=frontend:80
+      - USERS=10
+
+
+  adservice:
+    build:
+      context: ./src/adservice
+      dockerfile: Dockerfile
+    ports:
+      - "9555:9555"
+    environment:
+      - PORT=9555
