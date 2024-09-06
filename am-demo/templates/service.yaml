@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ .Values.service }}
+    app.kubernetes.io/managed-by: Helm
+  name: {{ .Chart.Name }}-{{ .Values.service }}-svc
+spec:
+  ports:
+  - port: 30080
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: {{ .Values.service }}
+  type: NodePort
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ .Values.service }}
+    app.kubernetes.io/managed-by: Helm
+  name: {{ .Chart.Name }}-{{ .Values.service }}-svc-ext
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: {{ .Values.service }}
+  type: LoadBalancer
+status:
+  loadBalancer: {}
